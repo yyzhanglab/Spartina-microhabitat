@@ -1,17 +1,18 @@
 #!/bin/sh
-#ÏîÄ¿£ºspartina_microbabitat
-#´úÂëÖ´ĞĞ¹¦ÄÜ£ºÊ¹ÓÃGATK¶Ô×ªÂ¼×éÊı¾İcall SNP
-#Ê¹ÓÃÊı¾İ£º£¨1£©60¸öÑù±¾µÄ¶ş´ú×ªÂ¼×é£¨2£©»¥»¨Ã×²İ»ùÒò×é£¨¸´µ©´óÑ§ÊÍ·Å£©
-#Ê¹ÓÃÈí¼ş¼°ÅäÖÃ£¨Ñ¡Ìî£©£ºGATK4.4,java17
+#é¡¹ç›®ï¼šspartina_microbabitat
+#ä»£ç æ‰§è¡ŒåŠŸèƒ½ï¼šä½¿ç”¨GATKå¯¹è½¬å½•ç»„æ•°æ®call SNP
+#ä½¿ç”¨æ•°æ®ï¼šï¼ˆ1ï¼‰60ä¸ªæ ·æœ¬çš„äºŒä»£è½¬å½•ç»„ï¼ˆ2ï¼‰äº’èŠ±ç±³è‰åŸºå› ç»„ï¼ˆå¤æ—¦å¤§å­¦é‡Šæ”¾ï¼‰
+#ä½¿ç”¨è½¯ä»¶åŠé…ç½®ï¼ˆé€‰å¡«ï¼‰ï¼šGATK4.4,java17
+
 for sample in A10-4 A12-5 A13 A14-8 A16 A17 A18 A19 A1 A20 A2 A4-1 A5 A6-2 A8-3 B11-6 B11 B12 B13-7 B14 B15 B16 B17 B20-11 B3-3 B6 B7 B8-4 B9 B1-1 C10 C11 C12-4 C13 C14 C16-5 C17 C18 C19 C20 C3 C4 C5 C6 C9-3 D10-3 D12 D14 D15 D16 D17-5 D20 D2 D3-1 D4 D5-2 D6 D7 D8 D175 
 do
 	
-	#Ê¹ÓÃSTAR½øĞĞ¶ş´Î¶Ô±È
+	#ä½¿ç”¨STARè¿›è¡ŒäºŒæ¬¡å¯¹æ¯”
 	mkdir ./${sample}
 	#STAR-2-mapping
 	STAR --runThreadN 30 --outFileNamePrefix ./${sample}/${sample} --outSAMtype BAM SortedByCoordinate --outFilterMultimapNmax 1 --genomeDir /media/yyzhang/data/data/shiqiang/RNAcount/index/ --readFilesIn /media/yyzhang/data/data/shiqiang/2/zjk/00.CleanData/${sample}/${sample}_1.clean.fq /media/yyzhang/data/data/shiqiang/2/zjk/00.CleanData/${sample}/${sample}_2.clean.fq --twopassMode Basic --outSAMstrandField intronMotif
 	
-	#AddOrReplaceReadGroupsÎªÃ¿¸öÑù±¾Ìí¼ÓÍ·ÎÄ¼ş
+	#AddOrReplaceReadGroupsä¸ºæ¯ä¸ªæ ·æœ¬æ·»åŠ å¤´æ–‡ä»¶
 	java -Xmx64g -jar /media/yyzhang/data/data/shiqiang/miniconda3/envs/gatk/picard.jar AddOrReplaceReadGroups \
         	I=/media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}Aligned.sortedByCoord.out.bam \
         	O=/media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}added_sorted.bam \
@@ -22,14 +23,14 @@ do
         	RGPU=hiseq \
         	RGSM=${sample}
 	
-	#MarkDuplicatesÈ¥ÖØmark duplicate
+	#MarkDuplicateså»é‡mark duplicate
   	java -Xmx64g -jar /media/yyzhang/data/data/shiqiang/miniconda3/envs/gatk/picard.jar MarkDuplicates \
        	 -I /media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}added_sorted.bam \
         	-O /media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}.sorted.markdup.bam \
         	-M /media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}.sorted.markdup.txt \
         	--REMOVE_DUPLICATES true \
         	--ASSUME_SORT_ORDER coordinate 
-	#SplitNCigarReadsÓÃÀ´´¦ÀícigarÀïº¬ÓĞnµÄreads,ÒòÎªRNAºÍDNA±È¶ÔÈí¼şµÄ²»Í¬£¬ÔÚ×öÏÂÒ»²½HaplotypeCallerµÄÊ±ºòĞèÒª°ÑÄÚº¬×ÓÈ¥³ı£¬ÕâÒ»²½°ÑcigarÖĞº¬ÓĞNµÄreads×öÁË¼ôÇĞ
+	#SplitNCigarReadsç”¨æ¥å¤„ç†cigaré‡Œå«æœ‰nçš„reads,å› ä¸ºRNAå’ŒDNAæ¯”å¯¹è½¯ä»¶çš„ä¸åŒï¼Œåœ¨åšä¸‹ä¸€æ­¥HaplotypeCallerçš„æ—¶å€™éœ€è¦æŠŠå†…å«å­å»é™¤ï¼Œè¿™ä¸€æ­¥æŠŠcigarä¸­å«æœ‰Nçš„readsåšäº†å‰ªåˆ‡
   	gatk --java-options "-Xmx40G -Djava.io.tmpdir=/media/yyzhang/data/data/shiqiang/GATKRNA/tmp/" SplitNCigarReads \
        	-R /media/yyzhang/data/data/shiqiang/RNAcount/ref/GWHCBIM00000000.genome.fasta \
        	-I /media/yyzhang/data/data/shiqiang/RNAcount/${sample}/${sample}.sorted.markdup.bam \
