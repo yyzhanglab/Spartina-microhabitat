@@ -1,4 +1,9 @@
 #####TIDYmass分析代谢组数据
+#项目：spartina_microbabitat
+#代码执行功能：代谢组数据定量定性分析
+#使用数据：（1）60个样本的代谢组文件，格式为mzXML（2）60个样本的代谢组文件，格式为mgf（3）meta文件记录样本信息（4）代谢组公共一级二级质谱数据库
+#使用软件及配置（选填）：R4.4、R包：tidymass
+
 library(tidymass)
 process_data(
   path = "/media/yyzhang/data2/shiqiang/metabolite/tidymass/pos",# 路径根据实际情况定
